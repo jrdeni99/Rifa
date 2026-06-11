@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Rifa Online - 100 Números com Segurança</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: #fffef7;
+            border-radius: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin: 0 auto;
+            padding: 24px 28px 38px;
+        }
+
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #c49a1c, #f5b81b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .sub {
+            color: #3a5e3f;
+            border-left: 5px solid #f5b81b;
+            padding-left: 16px;
+            font-weight: 500;
+            margin-bottom: 28px;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: #f3f1e6;
+            border-radius: 60px;
+            padding: 12px 24px;
+            margin-bottom: 32px;
+            gap: 15px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 40px;
+            padding: 6px 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .stat-card span:first-child {
+            font-weight: 600;
+            color: #2b4b2e;
+        }
+
+        .stat-card span:last-child {
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-left: 8px;
+            color: #1f3b21;
+        }
+
+        .reset-btn {
+            background: #c43b1c;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 8px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #a22e12;
+        }
+
+        .grid-rifas {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin: 30px 0 30px;
+        }
+
+        .numero-card {
+            background: white;
+            border-radius: 16px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 0 #c9c3ab;
+            border: 2px solid #e4ddc0;
+            cursor: pointer;
+            color: #2c4727;
+            transition: 0.1s;
+        }
+
+        .numero-card.vendido {
+            background: #e63946;
+            border-color: #9e2a2a;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.85;
+            position: relative;
+        }
+
+        .numero-card.vendido::after {
+            content: "✖";
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .numero-card.vendido span {
+            display: none;
+        }
+
+        .numero-card:not(.vendido):hover {
+            background: #ffeaac;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #b8ae88;
+        }
+
+        .form-venda {
+            background: #f9f7ef;
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 30px;
+            border: 1px solid #e9e2cc;
+        }
+
+        .form-venda h3 {
+            margin: 0 0 20px 0;
+            color: #2c7840;
+            font-size: 1.3rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2f4d31;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #ccc5aa;
+            font-size: 1rem;
+            background: white;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #f5b81b;
+            box-shadow: 0 0 0 2px rgba(245,184,27,0.3);
+        }
+
+        .vender-btn {
+            background: #2c7840;
+            border: none;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.15s;
+            width: 100%;
+        }
+
+        .vender-btn:hover {
+            background: #1f5c32;
+        }
+
+        .registro-vendas {
+            background: #f9f7ef;
+            border-radius: 32px;
+            padding: 24px;
+            border: 1px solid #e9e2cc;
+        }
+
+        .registro-vendas h3 {
+            margin: 0 0 15px 0;
+            color: #2c7840;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tabela-vendas {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0d9c0;
+        }
+
+        th {
+            background: #e8e4d4;
+            color: #2c4727;
+            position: sticky;
+            top: 0;
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background: #fff5df;
+        }
+
+        .badge {
+            background: #e63946;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .sem-vendas {
+            text-align: center;
+            padding: 40px;
+            color: #9b977d;
+            font-style: italic;
+        }
+
+        /* Modal de senha */
+        .modal-senha {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-senha.active {
+            display: flex;
+        }
+
+        .modal-conteudo {
+            background: white;
+            border-radius: 32px;
+            padding: 30px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-conteudo h3 {
+            margin: 0 0 15px 0;
+            color: #2c7840;
+        }
+
+        .modal-conteudo input {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            border: 2px solid #ccc5aa;
+            border-radius: 60px;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .modal-conteudo button {
+            background: #2c7840;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .modal-conteudo button.cancelar {
+            background: #999;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 28px;
+            color: #9b977d;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .grid-rifas {
+                gap: 6px;
+            }
+            .numero-card {
+                font-size: 0.9rem;
+            }
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎫 RIFA PREMIADA</h1>
+    <div class="sub">100 números • Preencha os dados para comprar • Clique no número para agilizar o preenchimento</div>
+
+    <div class="info-panel">
+        <div class="stats">
+            <div class="stat-card"><span>🎯 Disponíveis:</span> <span id="disponiveis-count">100</span></div>
+            <div class="stat-card"><span>✅ Vendidos:</span> <span id="vendidos-count">0</span></div>
+            <div class="stat-card"><span>💰 Arrecadado:</span> <span id="valor-arrecadado">R$ 0</span></div>
+        </div>
+        <button class="reset-btn" id="resetBtn">🔄 Resetar todas vendas</button>
+    </div>
+
+    <div class="grid-rifas" id="numerosGrid"></div>
+
+    <div class="form-venda">
+        <h3>📝 Registrar nova venda</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>🔢 Número (1 a 100)</label>
+                <input type="number" id="numeroVenda" placeholder="Ex: 42" min="1" max="100" step="1" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>👤 Nome completo</label>
+                <input type="text" id="nomeCliente" placeholder="Nome do comprador" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>📞 Telefone (WhatsApp)</label>
+                <input type="tel" id="telefoneCliente" placeholder="(99) 99999-9999" autocomplete="off">
+            </div>
+        </div>
+        <button class="vender-btn" id="venderBtn">✔️ Confirmar Venda (requer senha)</button>
+    </div>
+
+    <div class="registro-vendas">
+        <h3>📋 Vendas realizadas <span id="total-vendas-badge">(0)</span></h3>
+        <div id="tabelaVendasContainer" class="tabela-vendas"></div>
+    </div>
+
+    <footer>🔒 Todas as vendas e reset exigem a senha de administrador.</footer>
+</div>
+
+<!-- Modal de senha -->
+<div id="modalSenha" class="modal-senha">
+    <div class="modal-conteudo">
+        <h3>🔐 Senha necessária</h3>
+        <p id="modalMensagem">Digite a senha para confirmar esta ação:</p>
+        <input type="password" id="senhaInput" placeholder="Digite a senha" autocomplete="off">
+        <br>
+        <button id="btnConfirmarSenha">Confirmar</button>
+        <button id="btnCancelarSenha" class="cancelar">Cancelar</button>
+    </div>
+</div>
+
+<script>
+    // ---------- SENHA DEFINIDA ----------
+    const SENHA_ADMIN = "vainafe";  // senha conforme solicitado
+    
+    // ---------- ESTADO ----------
+    let numerosVendidos = new Set();
+    let vendasRegistradas = [];
+    
+    // Controle para saber qual ação está aguardando a senha
+    let acaoPendente = null;      // 'venda' ou 'reset'
+    let dadosVendaPendente = null; // para venda: { numero, nome, telefone }
+    
+    const PRECO_POR_NUMERO = 5.00;
+    
+    // Elementos DOM
+    const gridContainer = document.getElementById('numerosGrid');
+    const disponiveisSpan = document.getElementById('disponiveis-count');
+    const vendidosSpan = document.getElementById('vendidos-count');
+    const valorArrecadadoSpan = document.getElementById('valor-arrecadado');
+    const totalVendasBadge = document.getElementById('total-vendas-badge');
+    const resetBtn = document.getElementById('resetBtn');
+    const venderBtn = document.getElementById('venderBtn');
+    const numeroInput = document.getElementById('numeroVenda');
+    const nomeInput = document.getElementById('nomeCliente');
+    const telefoneInput = document.getElementById('telefoneCliente');
+    
+    // Elementos do modal
+    const modalSenha = document.getElementById('modalSenha');
+    const senhaInput = document.getElementById('senhaInput');
+    const btnConfirmarSenha = document.getElementById('btnConfirmarSenha');
+    const btnCancelarSenha = document.getElementById('btnCancelarSenha');
+    const modalMensagem = document.getElementById('modalMensagem');
+    
+    // Funções do modal
+    function abrirModalSenha(mensagem, acao, dados = null) {
+        modalMensagem.innerText = mensagem;
+        acaoPendente = acao;
+        dadosVendaPendente = dados;
+        senhaInput.value = '';
+        modalSenha.classList.add('active');
+        senhaInput.focus();
+    }
+    
+    function fecharModalSenha() {
+        modalSenha.classList.remove('active');
+        acaoPendente = null;
+        dadosVendaPendente = null;
+        senhaInput.value = '';
+    }
+    
+    function verificarSenha() {
+        const senhaDigitada = senhaInput.value;
+        if (senhaDigitada === SENHA_ADMIN) {
+            // Senha correta -> executar ação pendente
+            if (acaoPendente === 'venda' && dadosVendaPendente) {
+                executarVenda(dadosVendaPendente.numero, dadosVendaPendente.nome, dadosVendaPendente.telefone);
+            } else if (acaoPendente === 'reset') {
+                executarReset();
+            }
+            fecharModalSenha();
+        } else {
+            // Senha errada
+            modalMensagem.innerText = "❌ Senha incorreta! Tente novamente:";
+            senhaInput.value = '';
+            senhaInput.focus();
+            mostrarMensagem("Senha incorreta! Ação não realizada.", "erro");
+        }
+    }
+    
+    // Função que realmente executa a venda (chamada após senha correta)
+    function executarVenda(numero, nome, telefone) {
+        // Verificar novamente se ainda está disponível (por segurança)
+        if (numerosVendidos.has(numero)) {
+            mostrarMensagem(`⚠️ O número ${numero} já foi vendido! Recarregue a página e tente novamente.`, "erro");
+            return false;
+        }
+        
+        const agora = new Date();
+        const dataHoraStr = `${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR')}`;
+        
+        const novaVenda = {
+            numero: numero,
+            nome: nome,
+            telefone: telefone,
+            dataHora: dataHoraStr
+        };
+        
+        vendasRegistradas.push(novaVenda);
+        numerosVendidos.add(numero);
+        
+        // Limpar formulário
+        numeroInput.value = '';
+        nomeInput.value = '';
+        telefoneInput.value = '';
+        
+        atualizarInterface();
+        mostrarMensagem(`✅ Venda realizada com sucesso! Número ${numero} vendido para ${nome}.`, "sucesso");
+        numeroInput.focus();
+        return true;
+    }
+    
+    // Função que realmente executa o reset (chamada após senha correta)
+    function executarReset() {
+        if (vendasRegistradas.length === 0) {
+            mostrarMensagem("ℹ️ Nenhuma venda para resetar.", "info");
+            return;
+        }
+        
+        numerosVendidos.clear();
+        vendasRegistradas = [];
+        
+        numeroInput.value = '';
+        nomeInput.value = '';
+        telefoneInput.value = '';
+        
+        atualizarInterface();
+        mostrarMensagem("🔄 Todas as vendas foram removidas. Todos os números estão disponíveis novamente.", "sucesso");
+        numeroInput.focus();
+    }
+    
+    // Valida os dados da venda antes de pedir a senha
+    function solicitarVendaComSenha() {
+        const numero = parseInt(numeroInput.value, 10);
+        const nome = nomeInput.value.trim();
+        const telefone = telefoneInput.value.trim();
+        
+        // Validações
+        if (isNaN(numero) || numero < 1 || numero > 100) {
+            mostrarMensagem("❌ Número inválido! Digite um número entre 1 e 100.", "erro");
+            return;
+        }
+        
+        if (nome === "") {
+            mostrarMensagem("❌ O nome do comprador é obrigatório!", "erro");
+            nomeInput.focus();
+            return;
+        }
+        
+        if (telefone === "") {
+            mostrarMensagem("❌ O telefone é obrigatório!", "erro");
+            telefoneInput.focus();
+            return;
+        }
+        
+        if (numerosVendidos.has(numero)) {
+            mostrarMensagem(`⚠️ O número ${numero} já foi vendido! Escolha outro número.`, "erro");
+            numeroInput.focus();
+            return;
+        }
+        
+        // Abrir modal pedindo senha
+        abrirModalSenha(`🔐 Para vender o número ${numero} para ${nome}, digite a senha de autorização:`, 'venda', { numero, nome, telefone });
+    }
+    
+    // Solicitar reset com senha
+    function solicitarResetComSenha() {
+        if (vendasRegistradas.length === 0) {
+            mostrarMensagem("ℹ️ Nenhuma venda para resetar.", "info");
+            return;
+        }
+        abrirModalSenha("⚠️ ATENÇÃO! Isso irá apagar TODAS as vendas. Digite a senha para confirmar:", 'reset');
+    }
+    
+    // Atualizar interface
+    function atualizarInterface() {
+        renderizarGrid();
+        atualizarEstatisticas();
+        renderizarTabelaVendas();
+    }
+    
+    function renderizarGrid() {
+        gridContainer.innerHTML = '';
+        for (let i = 1; i <= 100; i++) {
+            const isVendido = numerosVendidos.has(i);
+            const divNumero = document.createElement('div');
+            divNumero.classList.add('numero-card');
+            if (isVendido) {
+                divNumero.classList.add('vendido');
+                divNumero.title = `Vendido - Clique para ver dados`;
+                divNumero.addEventListener('click', (function(num) {
+                    return function() {
+                        exibirInfoVenda(num);
+                    };
+                })(i));
+            } else {
+                divNumero.title = `Número ${i} disponível - Clique para preencher formulário`;
+                divNumero.addEventListener('click', (function(num) {
+                    return function() {
+                        numeroInput.value = num;
+                        numeroInput.focus();
+                        mostrarMensagem(`Número ${num} selecionado! Preencha nome e telefone e clique em confirmar.`, "info");
+                    };
+                })(i));
+            }
+            const spanNumero = document.createElement('span');
+            spanNumero.textContent = i;
+            divNumero.appendChild(spanNumero);
+            gridContainer.appendChild(divNumero);
+        }
+    }
+    
+    function exibirInfoVenda(numero) {
+        const venda = vendasRegistradas.find(v => v.numero === numero);
+        if (venda) {
+            alert(`📌 Número: ${venda.numero}\n👤 Comprador: ${venda.nome}\n📞 Telefone: ${venda.telefone}\n📅 Data: ${venda.dataHora}`);
+        } else {
+            alert(`Número ${numero} está vendido, mas informações não encontradas.`);
+        }
+    }
+    
+    function atualizarEstatisticas() {
+        const totalVendidos = numerosVendidos.size;
+        const disponiveis = 100 - totalVendidos;
+        disponiveisSpan.innerText = disponiveis;
+        vendidosSpan.innerText = totalVendidos;
+        const valorTotal = totalVendidos * PRECO_POR_NUMERO;
+        valorArrecadadoSpan.innerText = `R$ ${valorTotal.toFixed(2)}`;
+        totalVendasBadge.innerText = `(${totalVendidos})`;
+    }
+    
+    function renderizarTabelaVendas() {
+        const container = document.getElementById('tabelaVendasContainer');
+        
+        if (vendasRegistradas.length === 0) {
+            container.innerHTML = '<div class="sem-vendas">📭 Nenhuma venda registrada ainda. Preencha o formulário acima para começar.</div>';
+            return;
+        }
+        
+        const vendasOrdenadas = [...vendasRegistradas].sort((a, b) => a.numero - b.numero);
+        
+        let html = `<table><thead><tr><th>Número</th><th>Comprador</th><th>Telefone</th><th>Data/Hora</th></tr></thead><tbody>`;
+        
+        for (const venda of vendasOrdenadas) {
+            html += `<tr><td><strong>${venda.numero}</strong> <span class="badge">✖</span></td><td>${escapeHtml(venda.nome)}</td><td>${escapeHtml(venda.telefone)}</td><td>${venda.dataHora}</td></tr>`;
+        }
+        
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function mostrarMensagem(texto, tipo = "info") {
+        let msgDiv = document.getElementById('mensagem-flutuante');
+        if (!msgDiv) {
+            msgDiv = document.createElement('div');
+            msgDiv.id = 'mensagem-flutuante';
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.bottom = '20px';
+            msgDiv.style.right = '20px';
+            msgDiv.style.left = '20px';
+            msgDiv.style.maxWidth = '400px';
+            msgDiv.style.margin = '0 auto';
+            msgDiv.style.padding = '14px 20px';
+            msgDiv.style.borderRadius = '60px';
+            msgDiv.style.color = 'white';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.style.textAlign = 'center';
+            msgDiv.style.zIndex = '9999';
+            msgDiv.style.transition = 'opacity 0.3s';
+            msgDiv.style.opacity = '0';
+            document.body.appendChild(msgDiv);
+        }
+        
+        if (tipo === "erro") {
+            msgDiv.style.backgroundColor = "#c43b1c";
+        } else if (tipo === "sucesso") {
+            msgDiv.style.backgroundColor = "#2c7840";
+        } else {
+            msgDiv.style.backgroundColor = "#2d6a4f";
+        }
+        
+        msgDiv.innerHTML = texto;
+        msgDiv.style.opacity = '1';
+        
+        setTimeout(() => {
+            msgDiv.style.opacity = '0';
+        }, 3000);
+    }
+    
+    // Event listeners
+    venderBtn.addEventListener('click', solicitarVendaComSenha);
+    resetBtn.addEventListener('click', solicitarResetComSenha);
+    
+    btnConfirmarSenha.addEventListener('click', verificarSenha);
+    btnCancelarSenha.addEventListener('click', fecharModalSenha);
+    
+    // Enter no modal
+    senhaInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            verificarSenha();
+        }
+    });
+    
+    // Enter nos campos do formulário (chama a verificação com senha)
+    const inputs = [numeroInput, nomeInput, telefoneInput];
+    inputs.forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                solicitarVendaComSenha();
+            }
+        });
+    });
+    
+    // Inicializar
+    atualizarInterface();
+    
+    setTimeout(() => {
+        mostrarMensagem("🎉 Bem-vindo! Selecione um número, preencha nome e telefone e confirme a venda. 🔒 A senha é necessária para todas as ações.", "info");
+    }, 500);
+</script>
+</body>
+</html>
